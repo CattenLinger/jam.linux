@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+[ -z "$1" ] && {
+    echo "Parameter 1(target_filesystem) is required."
+    exit 1
+}
+
+TARGET_FS="$1"
+cd /root
+
+echo "Start download."
+curl -L -# \
+    --retry 10 --connect-timeout 5 \
+    --speed-limit 10 --speed-time 5 \
+    http://tinycorelinux.net/13.x/x86_64/release/distribution_files/corepure64.gz -O
+
+echo "Extracting rootfs"
+[ -d "/root/mnt" ] || mkdir /root/mnt
+mount /dev/$TARGET_FS /root/mnt
+cd /root/mnt
+gzip -d -c "/root/corepure64.gz" | cpio -idm
+
+echo "Finished."

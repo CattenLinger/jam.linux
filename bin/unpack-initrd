@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+source "bin/.tool.rc"
+
+INITRD_D="$BUILD_OUTPUT/initrd.d"
+INITRD_F="$BUILD_OUTPUT/initrd.gz"
+[ -f "$INITRD_F" ] || { "$INITRD_F doesn't exists."; exit 1; }
+
+echo -n "Unpacking '$INITRD_F'..."
+mkdir -p "$INITRD_D"
+cd "$INITRD_D"
+cat "$INITRD_F" | gzip -d -c | sudo cpio --quiet -idm
+cd "$WORK_DIR"
+echo " Done."
+echo "Output: $INITRD_D"

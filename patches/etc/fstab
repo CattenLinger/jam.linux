@@ -1,0 +1,5 @@
+# /etc/fstab
+proc            /proc        proc    rw,noatime          0       0
+sysfs           /sys         sysfs   rw,noatime          0       0
+devpts          /dev/pts     devpts  rw,noatime          0       0
+tmpfs           /dev/shm     tmpfs   rw,noatime          0       0

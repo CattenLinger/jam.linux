@@ -1,0 +1,15 @@
+#!/bin/busybox ash
+
+# Use tools
+. "/lib/jam/lib/jamtools.rc"
+
+################################################################
+# Main shutdown process
+################################################################
+
+echo "${BLUE}Syncing all filesystems."
+sync; sync
+
+echo "Shutdown in progress."
+sync
+echo ""

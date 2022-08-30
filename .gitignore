@@ -1,0 +1,6 @@
+/build
+/initrd.d
+/initrd.gz
+/vmlinuz
+/dist
+/build.rc.private

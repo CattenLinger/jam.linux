@@ -1,0 +1,15 @@
+
+
+JAM_HOME="/lib/jam"
+
+# Use busybox aliases
+. $JAM_HOME/lib/busybox.alias
+
+# Use ANSL Colors
+. $JAM_HOME/lib/ansicolors.rc
+
+# The OS release
+OS_RELEASE="$( verid=`grep '^VERSION_ID=' /etc/os-release`; echo ${verid#*=} )"
+
+# Kernel version
+OS_KERNEL_VER="$(uname -r)"

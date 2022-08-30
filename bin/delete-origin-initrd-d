@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+source "bin/.tool.rc"
+
+INITRD_D="$BUILD_OUTPUT/corepure64.d"
+[ -d "$INITRD_D" ] || { echo "$INITRD_D not exists." ; exit 1; }
+
+echo -n "Will delete $INITRD_D..."
+sudo rm -rf "$INITRD_D"
+echo " Finished."

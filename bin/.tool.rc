@@ -1,0 +1,5 @@
+
+WORK_DIR="$(pwd)"; BUILD_RC="$WORK_DIR/build.rc"
+[ -f "$BUILD_RC" ] || { echo "No build.rc file, skip."; exit 1; }
+source "$BUILD_RC"
+{ [ -z "$BUILD_OUTPUT" ] && BUILD_OUTPUT="$WORK_DIR" || :; };

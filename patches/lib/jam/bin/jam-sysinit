@@ -1,0 +1,70 @@
+#!/bin/busybox ash
+################################################################
+# RC Script for Jam.Linux
+# (c) Catten Linger 2004-2012
+################################################################
+
+set -e
+
+# Mount /proc.
+[ -f /proc/cmdline ] || /bin/mount /proc
+
+# Remount rootfs rw.
+/bin/mount -o remount,rw /
+
+# Mount system devices from /etc/fstab.
+/bin/mount -a
+
+clear
+
+# Use tools
+. "/lib/jam/lib/jamtools.rc"
+
+# Default user named 'jam'
+USER="jam"
+
+################################################################
+# Main init process
+################################################################
+
+echo "${GREEN}Booting ${YELLOW}Core $OS_RELEASE ${NORMAL}"
+echo "${GREEN}Running Linux Kernel ${YELLOW}$OS_KERNEL_VER${GREEN}.${NORMAL}"
+
+export PATH=/usr/local/sbin:/usr/local/bin:"$PATH"
+
+######## Prepare users
+echo "${GREEN}======== Preparing user           ========${NORMAL}"
+echo -n "Adding group ${YELLOW}wheel${NORMAL}."
+/usr/sbin/addgroup wheel
+echo "${GREEN} Done.${NORMAL}"
+
+echo -n "Adding group ${YELLOW}wheel${NORMAL} to sudoers."
+cat > /etc/sudoers <<-EOF
+# Group privilege specification
+%wheel    ALL=NOPASSWD: ALL
+EOF
+echo "${GREEN} Done.${NORMAL}"
+
+echo -n "Adding user ${YELLOW}$USER ${NORMAL}, default password ${MAGENTA}'123456'${NORMAL}... "
+/usr/sbin/adduser -s /bin/sh -D "$USER"
+/usr/sbin/adduser "$USER" staff
+/usr/sbin/adduser "$USER" wheel
+echo "$USER":123456 | /usr/sbin/chpasswd -m
+echo "${GREEN} Done.${NORMAL}"
+
+echo
+echo "${GREEN}======== Starting System Services ========${NORMAL}"
+######## Start udevd
+
+# Start Udev to populate /dev and handle hotplug events
+echo -n "${BLUE}Starting udev daemon for hotplug support...${NORMAL}"
+/sbin/udevd --daemon 2>&1 >/dev/null
+/sbin/udevadm trigger --action=add 2>&1 >/dev/null &
+rotdash $!
+echo "${GREEN} Done.${NORMAL}"
+
+# Install loop mod
+modprobe loop 2>/dev/null
+
+# Config ld
+/sbin/ldconfig 2>/dev/null

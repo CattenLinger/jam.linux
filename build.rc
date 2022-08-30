@@ -1,0 +1,95 @@
+#!/bin/bash
+
+[ -f "build.rc.private" ] || touch "build.rc.private"
+source build.rc.private
+
+TC_VERSION=13
+TC_ARCH=x86_64
+
+BUILD_OUTPUT="$WORK_DIR/dist"
+
+CURL_DOWNLOAD="$CURL_DOWNLOAD --socks5 10.0.233.3:7891"
+CURL_FETCH="$CURL_FETCH --socks5 10.0.233.3:7891"
+
+CACHE_FILES=true
+#DO_NOT_CLEANUP=true
+
+PACKAGES=(
+  "fuse"
+  "curl"
+  "openssh"
+  "lua-5.3"
+  "iproute2"
+)
+
+################################################################
+# Start additional patches
+additional_patchs() {
+################################################################
+:
+local ROOTFS="$BUILD_DIR/rootfs"
+
+#
+# Main
+#
+
+echo "Removing unused kernel entry files"
+local i
+for i in init linuxrc
+do 
+  [ -f "$i" ] && rm -vrf "$ROOTFS/$i";
+done
+
+# echo "Link (rootfs)/sbin/init to (rootfs)/init"
+# ln -sf /sbin/init "$ROOTFS/init"
+
+echo "Removing (rootfs)/etc/init.d"
+rm -rf $BUILD_DIR/rootfs/etc/init.d
+
+echo "Strinking (rootfs)/dev and back it up to (rootfs)/opt/dev.extra.gz"
+(cd "$ROOTFS"; find -P dev/ | cpio -o -H newc ) | gzip -c > "$ROOTFS/opt/dev.extra.gz"
+
+local DEVFS="$ROOTFS/dev"
+rm -rf "$DEVFS"
+mkdir -p "$DEVFS"
+chmod 755 "$DEVFS"
+chown root:root "$DEVFS"
+
+echo "Creating nessesary device folders"
+for i in pts shm; do mkdir -p "$DEVFS/$i"; done
+
+echo "Creating nessesary device nodes"
+(
+  cd "$DEVFS";
+  :;
+  mknod zero    c 1 5   ;
+  mknod null    c 1 3   ;
+  mknod random  c 1 8   ;
+  mknod urandom c 1 9   ;
+  mknod kmsg    c 1 11  ;
+  mknod tty0    c 4 0   ;
+  mknod tty     c 5 0   ;
+  mknod initrd  b 1 250 ;
+  mknod ram0    b 1 0   ;
+)
+
+echo "Preparing patches"
+PATCH_TMP="$BUILD_DIR/patches.tmp"
+mkdir -p "$PATCH_TMP"
+cp -Rp "$WORK_DIR/patches/." "$PATCH_TMP/"
+
+echo "Applying permissions for (rootfs)/bin"
+chmod -vR +x $PATCH_TMP/bin
+
+echo "Applying permissions for (rootfs)/sbin"
+chmod -vR +x $PATCH_TMP/sbin
+
+echo "Applying permissions for (rootfs)/lib/jam"
+chmod -vR +x $PATCH_TMP/lib/jam/bin
+
+echo "Applying patches"
+cp -vRp "$PATCH_TMP/." "$ROOTFS/"
+################################################################
+# End additional patches
+}
+################################################################
