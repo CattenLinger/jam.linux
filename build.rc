@@ -14,10 +14,12 @@ CURL_FETCH="$CURL_FETCH --socks5 10.0.233.3:7891"
 CACHE_FILES=true
 #DO_NOT_CLEANUP=true
 
+# ncursesw added for lua-5.3
 PACKAGES=(
   "fuse"
   "curl"
   "openssh"
+  "ncursesw"
   "lua-5.3"
   "iproute2"
 )

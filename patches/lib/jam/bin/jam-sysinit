@@ -67,4 +67,4 @@ echo "${GREEN} Done.${NORMAL}"
 modprobe loop 2>/dev/null
 
 # Config ld
-/sbin/ldconfig 2>/dev/null
+/sbin/ldconfig -C /tmp/ldconfig.cache 2>/dev/null

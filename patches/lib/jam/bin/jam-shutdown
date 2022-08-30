@@ -7,9 +7,9 @@
 # Main shutdown process
 ################################################################
 
-echo "${BLUE}Syncing all filesystems."
+echo "${GREEN}Syncing all filesystems.${NORMAL}"
 sync; sync
 
-echo "Shutdown in progress."
+echo "${RED}Shutdown in progress.${NORMAL}"
 sync
 echo ""
