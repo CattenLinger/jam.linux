@@ -39,7 +39,7 @@ echo -n "Adding group ${YELLOW}wheel${NORMAL}."
 echo "${GREEN} Done.${NORMAL}"
 
 echo -n "Adding group ${YELLOW}wheel${NORMAL} to sudoers."
-cat > /etc/sudoers <<-EOF
+cat >> /etc/sudoers <<-EOF
 # Group privilege specification
 %wheel    ALL=NOPASSWD: ALL
 EOF

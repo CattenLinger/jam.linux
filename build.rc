@@ -80,8 +80,8 @@ cp -Rp "$WORK_DIR/patches/." "$PATCH_TMP/"
 echo "Applying permissions for (rootfs)/bin"
 chmod -vR +x $PATCH_TMP/bin
 
-echo "Applying permissions for (rootfs)/sbin"
-chmod -vR +x $PATCH_TMP/sbin
+#echo "Applying permissions for (rootfs)/sbin"
+#chmod -vR +x $PATCH_TMP/sbin
 
 echo "Applying permissions for (rootfs)/lib/jam"
 chmod -vR +x $PATCH_TMP/lib/jam/bin
