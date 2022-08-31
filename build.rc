@@ -15,8 +15,8 @@ CACHE_FILES=true
 PACKAGES=(
   "fuse"
   "curl"
+  "bash"
   "openssh"
-  "ncursesw"
   "lua-5.3"
   "iproute2"
 )

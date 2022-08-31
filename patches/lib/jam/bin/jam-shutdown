@@ -6,7 +6,7 @@
 ################################################################
 # Main shutdown process
 ################################################################
-
+echo
 echo "${GREEN}Syncing all filesystems.${NORMAL}"
 sync; sync
 

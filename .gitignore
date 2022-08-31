@@ -4,3 +4,4 @@
 /vmlinuz
 /dist
 /build.rc.private
+/bin/make-tinycore-linux
