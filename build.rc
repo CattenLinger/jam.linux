@@ -1,7 +1,5 @@
 #!/bin/bash
 
-[ -f "build.rc.private" ] || touch "build.rc.private"
-source build.rc.private
 
 TC_VERSION=13
 TC_ARCH=x86_64
@@ -25,12 +23,17 @@ PACKAGES=(
   "getlocale"
 )
 
+LP_VERSION_TABLE="quickjs,2021-03-27"
+
+[ -f "build.rc.private" ] || touch "build.rc.private"
+source build.rc.private
+
 ################################################################
 # Start additional patches
 additional_patchs() {
 ################################################################
 :
-local ROOTFS="$BUILD_DIR/rootfs"
+export ROOTFS="$BUILD_DIR/rootfs"
 
 #
 # Main
@@ -79,7 +82,7 @@ echo "Creating nessesary device nodes"
 echo "Preparing patches"
 PATCH_TMP="$BUILD_DIR/patches.tmp"
 mkdir -p "$PATCH_TMP"
-cp -Rp "$WORK_DIR/patches/." "$PATCH_TMP/"
+cp -Rp "$WORK_DIR/patches.rootfs.d/." "$PATCH_TMP/"
 
 echo "Applying permissions for (rootfs)/bin"
 chmod -vR +x $PATCH_TMP/bin
@@ -92,7 +95,30 @@ chmod -vR +x $PATCH_TMP/lib/jam/bin
 
 echo "Applying patches"
 cp -vRp "$PATCH_TMP/." "$ROOTFS/"
+
+load_live_patches
+
+(declare -f hook_after_addtional_patches > /dev/null 2>&1 && hook_after_addtional_patches || :)
 ################################################################
 # End additional patches
 }
 ################################################################
+
+load_live_patches() {
+    if [ ! -d $WORK_DIR/patches.live.d ]; then
+        return 0
+    fi
+    for FN in $WORK_DIR/patches.live.d/*.sh; do
+        local RFN=$(realpath $FN)
+        local PN=$(basename $FN)
+        echo "===================================="
+        echo "Loading live patch '$PN' ($RFN)..."
+        local PExtDir=$BUILD_DIR/livepatches.tmp/$PN
+        mkdir -p $PExtDir
+        (
+            cd $PExtDir
+            source $RFN
+        )
+    done
+    rm -rf $BUILD_DIR/livepatches.tmp
+}
