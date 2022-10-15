@@ -1,5 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 . "bin/.tool.rc"
-
-curl -sL 'https://github.com/CattenLinger/cattenlinger/raw/master/tools/make-tinycore-linux/make-tinycore-linux' | sudo bash -
+curl -sL 'https://github.com/CattenLinger/cattenlinger/raw/master/tools/make-tinycore-linux/make-tinycore-linux' | (export WORKDIR=$(pwd); cd $(pwd); sudo -E sh -s $@)
