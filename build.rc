@@ -23,6 +23,8 @@ PACKAGES=(
   "getlocale"
 )
 
+LP_VERSION_TABLE="quickjs,2021-03-27"
+
 [ -f "build.rc.private" ] || touch "build.rc.private"
 source build.rc.private
 
